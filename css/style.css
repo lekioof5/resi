@@ -1,0 +1,95 @@
+body {
+	background-color: #f4f7f6;
+	font-family:
+		"Inter",
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		sans-serif;
+}
+
+.scan-wrapper {
+	background: #ffffff;
+	border-top: 4px solid #212529;
+	border-radius: 8px;
+	padding: 40px;
+}
+
+.input-scan-field {
+	font-size: 1.5rem;
+	letter-spacing: 2px;
+	font-weight: 500;
+	border: 2px solid #dee2e6;
+	transition: all 0.3s;
+}
+
+.input-scan-field:focus {
+	border-color: #212529;
+	box-shadow: none;
+}
+
+.table-container {
+	max-height: 450px;
+	overflow-y: auto;
+}
+
+.table thead th {
+	background-color: #f8f9fa;
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	color: #6c757d;
+	border-bottom: 1px solid #dee2e6;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.card {
+	border: none;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Custom Scrollbar */
+.table-container::-webkit-scrollbar {
+	width: 5px;
+}
+.table-container::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+.table-container::-webkit-scrollbar-thumb {
+	background: #ccc;
+	border-radius: 10px;
+}
+
+/* Kunci lebar kolom waktu agar tetap sejajar */
+.col-time-fixed {
+	width: 150px;
+	white-space: nowrap;
+}
+
+/* Mempertegas tampilan tanggal yang berbeda hari */
+.text-date-old {
+	color: #dc3545; /* Warna merah tipis untuk menandakan dokumen hari sebelumnya */
+	font-weight: 600;
+}
+
+/* Sticky Footer Setup */
+html,
+body {
+	height: 100%;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex: 1 0 auto; /* Ini yang mendorong footer ke bawah */
+}
+
+.footer {
+	background-color: #ffffff;
+	z-index: 100;
+}
