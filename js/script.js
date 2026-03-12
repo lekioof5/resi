@@ -1,67 +1,65 @@
 document.addEventListener("DOMContentLoaded", function () {
-	// Letakkan ini di bagian paling atas DOMContentLoaded di script.js
-	if (
-		window.location.search.indexOf("error=") > -1 ||
-		window.location.search.indexOf("success=") > -1
-	) {
-		// Tunggu 1 detik agar user sempat baca, lalu bersihkan URL tanpa refresh
-		setTimeout(function () {
-			const cleanUrl = window.location.pathname;
-			window.history.replaceState({}, document.title, cleanUrl);
-		}, 1000);
-	}
-
 	const resiInput = document.getElementById("resiInput");
 	const manualModal = document.getElementById("manualEntryModal");
 	const loginModal = document.getElementById("loginModal");
 	const notificationArea = document.getElementById("notification-area");
 
-	// 1. Logika Fokus Input
+	// --- 1. LOGIKA AUTO-FOCUS AGRESIF ---
 	if (resiInput) {
 		resiInput.focus();
+
+		// Klik di mana saja, fokus balik ke input (kecuali jika modal buka)
 		document.addEventListener("click", () => {
-			if (
-				!manualModal.classList.contains("show") &&
-				!loginModal.classList.contains("show")
-			) {
-				resiInput.focus();
+			const isModalOpen = document.querySelector(".modal.show");
+			if (!isModalOpen) resiInput.focus();
+		});
+
+		// Kembalikan fokus SETELAH modal ditutup
+		const modals = [
+			manualModal,
+			loginModal,
+			document.getElementById("modalProses"),
+		];
+		modals.forEach((modalEl) => {
+			if (modalEl) {
+				modalEl.addEventListener("hidden.bs.modal", () => {
+					setTimeout(() => resiInput.focus(), 100);
+				});
 			}
 		});
 	}
 
-	// 2. LOGIKA MEMBERSIHKAN NOTIFIKASI & URL (Solusi masalah Anda)
-	if (notificationArea && notificationArea.innerText.trim() !== "") {
-		// Hapus parameter di URL browser agar tidak muncul lagi saat auto-refresh
-		if (window.history.replaceState) {
-			const cleanUrl =
-				window.location.protocol +
-				"//" +
-				window.location.host +
-				window.location.pathname;
-			window.history.replaceState({ path: cleanUrl }, "", cleanUrl);
-		}
-
-		// Hilangkan notifikasi secara visual setelah 3 detik
+	// --- 2. PEMBERSIHAN URL & NOTIFIKASI ---
+	if (
+		window.location.search.includes("error=") ||
+		window.location.search.includes("success=") ||
+		window.location.search.includes("status=")
+	) {
 		setTimeout(() => {
-			const alerts = notificationArea.querySelectorAll(".alert");
-			alerts.forEach((alert) => {
-				alert.classList.remove("show");
-				setTimeout(() => alert.remove(), 500);
-			});
+			const cleanUrl = window.location.pathname;
+			window.history.replaceState({}, document.title, cleanUrl);
+
+			if (notificationArea) {
+				const alerts = notificationArea.querySelectorAll(".alert");
+				alerts.forEach((alert) => {
+					alert.classList.remove("show");
+					setTimeout(() => alert.remove(), 500);
+				});
+			}
 		}, 3000);
 	}
 
-	// 3. Logika Auto-Refresh 5 Detik
-	setInterval(function () {
-		const isTyping =
-			document.activeElement.tagName === "INPUT" &&
-			document.activeElement.value !== "";
-		const isModalOpen =
-			manualModal.classList.contains("show") ||
-			loginModal.classList.contains("show");
+	// --- 3. LOGIKA AUTO-REFRESH KHUSUS KURIR ---
+	if (typeof IS_INDEX_KURIR !== "undefined" && IS_INDEX_KURIR === true) {
+		setInterval(function () {
+			const isModalOpen = document.querySelector(".modal.show");
 
-		if (!isTyping && !isModalOpen) {
-			window.location.reload();
-		}
-	}, 5000);
+			// Anggap "sedang mengetik" jika input ada isinya
+			const isTyping = resiInput && resiInput.value.length > 0;
+
+			if (!isModalOpen && !isTyping) {
+				window.location.reload();
+			}
+		}, 5000);
+	}
 });

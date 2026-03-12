@@ -29,13 +29,17 @@ $result = mysqli_query($koneksi, $query);
 
 <table border="1">
     <thead>
-        <tr style="background-color: #333; color: #fff;">
+        <tr style="background-color: #333; color: #fff; font-weight: bold;">
             <th>No</th>
-            <th>Nomor Resi</th>
+            <th>No Resi</th>
             <th>Ekspedisi</th>
-            <th>Waktu Scan Masuk</th>
+            <th>Tanggal Terima (Scan)</th>
+            <th>Nama Vendor</th>
+            <th>Entity (Jumlah)</th>
+            <th>URN</th>
             <th>Waktu Validasi</th>
-            <th>PIC Verifikator</th>
+            <th>Petugas (PIC)</th>
+            <th>Reason / Keterangan</th>
         </tr>
     </thead>
     <tbody>
@@ -46,8 +50,12 @@ while ($row = mysqli_fetch_assoc($result)): ?>
             <td style="mso-number-format:'\@';">'<?= $row['nomor_resi'] ?></td>
             <td><?= $row['ekspedisi'] ?></td>
             <td><?= $row['waktu_masuk'] ?></td>
+            <td><?= $row['nama_vendor'] ?></td>
+            <td><?= $row['jumlah'] ?></td>
+            <td><?= $row['urn'] ?></td>
             <td><?= $row['waktu_validasi'] ?></td>
             <td><?= $row['nama_pic'] ?></td>
+            <td><?= $row['reason'] ?></td>
         </tr>
         <?php endwhile; ?>
     </tbody>

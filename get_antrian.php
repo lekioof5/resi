@@ -43,7 +43,10 @@ if (mysqli_num_rows($query_antrian) > 0):
             </select>
         </td>
         <td class="text-center">
-            <a href="proses_validasi.php?id=<?= $row['id']; ?>" class="btn btn-success btn-sm fw-bold px-3">VERIFIKASI</a>
+            <button class="btn btn-primary btn-sm fw-bold"
+                    onclick="bukaModalValidasi(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
+                PROSES
+            </button>
         </td>
     </tr>
     <?php endwhile;

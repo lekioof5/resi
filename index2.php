@@ -52,36 +52,12 @@ $query_antrian = mysqli_query($koneksi, "SELECT * FROM scans WHERE is_validated 
 
 <script src="js/realtime-antrian.js"></script>
 
-<script>
-function updateEkspedisi(id, nilaiBaru) {
-    // Tampilkan loading simpel atau ganti warna teks
-    const selectElement = event.target;
-    selectElement.classList.add('text-primary');
-
-    fetch('proses_update_ekspedisi.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${id}&ekspedisi=${encodeURIComponent(nilaiBaru)}`
-    })
-    .then(response => response.text())
-    .then(data => {
-        if (data === "success") {
-            // Beri efek hijau kilat sebagai tanda sukses
-            selectElement.classList.remove('text-primary');
-            selectElement.classList.add('text-success');
-            setTimeout(() => selectElement.classList.remove('text-success'), 1000);
-        } else {
-            alert("Gagal mengupdate ekspedisi.");
-        }
-    });
-}
-</script>
-
 <?php
 include "includes/modal_manual.php";
 include "includes/modal_profil.php";
 if ($_SESSION['role'] == 'admin') {
     include "includes/modal_manage_user.php";
 }
+include "includes/modal_proses.php";
 include "includes/footer.php";
 ?>

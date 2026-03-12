@@ -67,7 +67,7 @@ while ($row = mysqli_fetch_assoc($result_baru)): ?>
                                     $waktu_db = strtotime($row['waktu_masuk']);
     if (date('Y-m-d', $waktu_db) == date('Y-m-d')) {
         // Jika hari ini, tampilkan jam saja
-        echo "Hari ini, " . date('H:i', $waktu_db);
+        echo date('d M, H:i', $waktu_db);
     } else {
         // Jika kemarin atau sebelumnya, tampilkan tanggal
         echo date('d M, H:i', $waktu_db);
@@ -99,7 +99,18 @@ while ($row_v = mysqli_fetch_assoc($result_valid)): ?>
                                 <td><?= $no_v++; ?></td>
                                 <td><?= $row_v['nomor_resi']; ?></td>
                                 <td><?= $row_v['nama_pic'] ?? 'Admin'; ?></td>
-                                <td class="text-end small"><?= date('H:i', strtotime($row_v['waktu_masuk'])); ?></td>
+                                <td class="text-end text-muted small">
+                                    <?php
+                                    $waktu_valid = strtotime($row_v['waktu_validasi']);
+    if (date('Y-m-d', $waktu_valid) == date('Y-m-d')) {
+        // Jika hari ini, tampilkan jam saja
+        echo date('d M, H:i', $waktu_valid);
+    } else {
+        // Jika kemarin atau sebelumnya, tampilkan tanggal
+        echo date('d M, H:i', $waktu_valid);
+    }
+    ?>
+                                </td>
                             </tr>
                             <?php endwhile; ?>
                         </tbody>
@@ -109,6 +120,12 @@ while ($row_v = mysqli_fetch_assoc($result_valid)): ?>
         </div>
     </div>
 </div>
+
+<script>
+    const IS_INDEX_KURIR = true;
+</script>
+
+<script src="js/script.js"></script>
 
 <?php
 // Panggil modal di sini agar struktur HTML tetap valid

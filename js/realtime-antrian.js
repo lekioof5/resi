@@ -1,11 +1,15 @@
-// File: js/realtime-antrian.js
-
-let isUserEditing = false;
 let refreshInterval;
+let isUserEditing = false;
 
-// Fungsi untuk mengambil data dari server
+// Fungsi utama mengambil data tabel
 function loadAntrian() {
-	if (isUserEditing) return; // Jangan refresh jika user sedang membuka dropdown
+	// PROTEKSI: Jangan refresh jika user sedang edit dropdown ATAU ada modal apapun yang terbuka
+	const anyModalOpen = document.querySelector(".modal.show");
+
+	if (isUserEditing || anyModalOpen) {
+		console.log("Auto-update ditunda: User sedang berinteraksi.");
+		return;
+	}
 
 	fetch("get_antrian.php")
 		.then((response) => response.text())
@@ -15,13 +19,12 @@ function loadAntrian() {
 				tableBody.innerHTML = data;
 			}
 		})
-		.catch((err) => console.error("Gagal memuat data:", err));
+		.catch((err) => console.error("Koneksi ke server terputus:", err));
 }
 
-// Fungsi kontrol refresh (Interval 5 detik)
+// Fungsi kontrol refresh
 function startRefresh() {
 	isUserEditing = false;
-	// Bersihkan interval lama jika ada untuk mencegah double interval
 	clearInterval(refreshInterval);
 	refreshInterval = setInterval(loadAntrian, 5000);
 }
@@ -31,8 +34,11 @@ function stopRefresh() {
 	clearInterval(refreshInterval);
 }
 
-// Fungsi Update Ekspedisi (AJAX)
+// Update Ekspedisi tanpa refresh halaman
 function updateEkspedisi(id, nilaiBaru, element) {
+	if (!element) return;
+	stopRefresh(); // Berhenti refresh saat proses simpan
+
 	element.classList.add("text-primary");
 
 	fetch("proses_update_ekspedisi.php", {
@@ -43,20 +49,41 @@ function updateEkspedisi(id, nilaiBaru, element) {
 		.then((response) => response.text())
 		.then((data) => {
 			if (data === "success") {
-				element.classList.remove("text-primary");
-				element.classList.add("text-success");
+				element.classList.replace("text-primary", "text-success");
 				setTimeout(() => {
 					element.classList.remove("text-success");
-					startRefresh(); // Jalankan kembali auto-refresh setelah simpan
+					startRefresh();
 				}, 1000);
 			} else {
-				alert("Gagal mengupdate ekspedisi.");
+				alert("Gagal update!");
 				startRefresh();
 			}
-		});
+		})
+		.catch(() => startRefresh());
 }
 
-// Inisialisasi saat halaman siap
+// Handler Modal Validasi
+function bukaModalValidasi(id, resi) {
+	stopRefresh();
+
+	document.getElementById("modal_id").value = id;
+	document.getElementById("modal_resi").value = resi;
+
+	const modalEl = document.getElementById("modalProses");
+	const myModal = new bootstrap.Modal(modalEl);
+	myModal.show();
+
+	// Pastikan refresh jalan lagi HANYA saat modal benar-benar tertutup
+	modalEl.addEventListener(
+		"hidden.bs.modal",
+		() => {
+			startRefresh();
+		},
+		{ once: true },
+	); // {once: true} agar event tidak menumpuk
+}
+
+// Jalankan saat startup
 document.addEventListener("DOMContentLoaded", () => {
 	loadAntrian();
 	startRefresh();
