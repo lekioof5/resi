@@ -93,3 +93,101 @@ main {
 	background-color: #ffffff;
 	z-index: 100;
 }
+
+.verif-extra-field {
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* --- Dashboard Tab Styles --- */
+.nav-pills .nav-link {
+	border: 1px solid #e9ecef;
+	color: #6c757d;
+	transition: all 0.2s ease-in-out;
+	background-color: #fff;
+	margin-right: 5px;
+}
+
+.nav-pills .nav-link:hover {
+	background-color: #f8f9fa;
+	border-color: #dee2e6;
+}
+
+/* Warna saat Tab Aktif */
+.nav-pills .nav-link.active {
+	background-color: #212529 !important; /* Warna Hitam Elegan */
+	color: #ffffff !important;
+	border-color: #212529;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Real-time Loader Styles --- */
+#refresh-loader {
+	transition: opacity 0.3s ease;
+}
+
+.opacity-0 {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.opacity-100 {
+	opacity: 1;
+}
+
+/* Merapikan kolom waktu agar tidak bergeser */
+.col-time-fixed {
+	width: 110px;
+	white-space: nowrap;
+}
+
+/* Efek berkedip untuk reminder */
+#my-pending-badge {
+	animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+	0% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+	}
+	70% {
+		transform: scale(1);
+		box-shadow: 0 0 0 5px rgba(220, 53, 69, 0);
+	}
+	100% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+	}
+}
+
+/* Menandakan teks bisa diedit */
+.editable-ekspedisi {
+	cursor: pointer;
+	border-bottom: 1px dashed #ccc;
+	padding: 2px 4px;
+	border-radius: 4px;
+	transition: background 0.2s;
+}
+
+.editable-ekspedisi:hover {
+	background-color: #fff3cd; /* Warna kuning soft saat hover */
+	border-bottom: 1px solid #ffc107;
+}
+
+.editable-ekspedisi:focus {
+	outline: none;
+	background-color: #fff;
+	border: 1px solid #0d6efd;
+	box-shadow: 0 0 5px rgba(13, 110, 253, 0.2);
+}

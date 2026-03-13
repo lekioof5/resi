@@ -37,7 +37,7 @@ $result_valid = mysqli_query($koneksi, $query_valid);
                            placeholder="Scan Barcode..." required autocomplete="off">
 
                     <button type="button" class="btn btn-link btn-sm text-decoration-none text-muted" data-bs-toggle="modal" data-bs-target="#manualEntryModal">
-                        Bypass Scan (Tanpa Resi)
+                        TANPA RESI (Klik Disini)
                     </button>
                 </form>
             </div>
