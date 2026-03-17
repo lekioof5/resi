@@ -63,3 +63,50 @@ document.addEventListener("DOMContentLoaded", function () {
 		}, 5000);
 	}
 });
+
+// --- FUNGSI PENCARIAN GLOBAL ---
+function handleSearchKeyPress(e) {
+	if (e.key === "Enter") {
+		executeGlobalSearch();
+	}
+}
+
+function executeGlobalSearch() {
+	const input = document.getElementById("globalSearchInput");
+	if (!input) return;
+
+	const keyword = input.value.trim();
+
+	if (keyword === "") {
+		alert("Silakan masukkan nomor resi atau URN.");
+		return;
+	}
+
+	// Tampilkan feedback loading pada tombol jika ada
+	const btn = document.getElementById("btnSearchGlobal");
+	if (btn) btn.disabled = true;
+
+	fetch(`get_search_resi.php?keyword=${encodeURIComponent(keyword)}`)
+		.then((response) => response.json())
+		.then((data) => {
+			if (btn) btn.disabled = false;
+
+			if (data.error) {
+				alert("Data tidak ditemukan di database.");
+			} else {
+				// KUNCINYA: Memanggil fungsi yang ada di includes/modal_detail.php
+				if (typeof lihatDetailHistory === "function") {
+					lihatDetailHistory(data);
+					input.value = "";
+				} else {
+					console.error(
+						"Fungsi lihatDetailHistory tidak ditemukan. Pastikan includes/modal_detail.php sudah di-include.",
+					);
+				}
+			}
+		})
+		.catch((err) => {
+			if (btn) btn.disabled = false;
+			console.error("Search Error:", err);
+		});
+}

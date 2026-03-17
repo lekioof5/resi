@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "UPDATE scans SET
                 status = 1,
                 nama_vendor = '$vendor',
-                qty = '$qty',
+                jumlah = '$qty',
                 keterangan_reject = '$keterangan', -- Masuk ke kolom keterangan yang sama
                 nama_pic = '$nama_pic',
                 waktu_receive = NOW()

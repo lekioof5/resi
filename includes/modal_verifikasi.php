@@ -71,10 +71,14 @@
                     <div id="field_resolve" class="verif-extra-field d-none">
                         <div class="p-3 bg-light rounded-3 border-start border-info border-4">
                             <label class="small fw-bold mb-1 text-info text-uppercase">Cari Dokumen yang Dilengkapi:</label>
-                            <select name="id_data_lama" class="form-select border-info" id="select_pending_data">
+                            <select name="id_data_lama" class="form-select border-info mb-3" id="select_pending_data">
                                 <option value="">-- Memuat Data Pending... --</option>
                             </select>
-                            <small class="text-muted d-block mt-2">Pilih Vendor/Invoice yang sesuai untuk menggabungkan dokumen ini.</small>
+
+                            <label class="small fw-bold mb-1 text-success text-uppercase">Input Nomor URN (Untuk Keduanya):</label>
+                            <input type="text" name="nomor_urn_resolve" class="form-control border-success mb-2" id="input_urn_resolve" placeholder="Masukkan Nomor URN">
+
+                            <small class="text-muted d-block mt-2">Pilih data pending. URN ini akan otomatis diterapkan pada resi utama dan resi susulan ini.</small>
                         </div>
                     </div>
 
@@ -118,6 +122,7 @@ function toggleVerifFields() {
     else if (document.getElementById('radio_resolve').checked) {
         document.getElementById('field_resolve').classList.remove('d-none');
         document.getElementById('select_pending_data').required = true;
+        document.getElementById('input_urn_resolve').required = true;
         loadPendingOptions(); // Panggil data pending dari database
     }
     else if (document.getElementById('radio_pending').checked) {

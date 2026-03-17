@@ -43,28 +43,41 @@ $query_antrian = mysqli_query($koneksi, $sql);
 
 if (mysqli_num_rows($query_antrian) > 0):
     while ($row = mysqli_fetch_assoc($query_antrian)):
-        // Logika penentuan waktu yang akan ditampilkan
         $waktu = (!empty($row['waktu_tampil'])) ? $row['waktu_tampil'] : $row['waktu_masuk'];
+
+        // Cek apakah ini dokumen susulan (status 5 = LINKED)
+        $is_susulan = ($row['status'] == 5);
+        $row_style = $is_susulan ? 'style="border-left: 4px solid #0dcaf0; background-color: #f8fdff;"' : '';
         ?>
-<tr>
+<tr <?= $row_style ?>>
     <td class="ps-4 col-time-fixed">
         <span class="d-block fw-bold"><?= date('H:i', strtotime($waktu)) ?></span>
         <small class="text-muted text-uppercase" style="font-size: 10px;"><?= $label_waktu ?> <?= date('d/m', strtotime($waktu)) ?></small>
     </td>
 
     <td>
-        <div class="fw-bold text-dark"><?= htmlspecialchars($row['nomor_resi']) ?></div>
+        <div class="d-flex align-items-center mb-1">
+            <div class="fw-bold text-dark me-2">
+                <?= htmlspecialchars($row['nomor_resi'] ?? '') ?>
+            </div>
+
+            <?php if ($is_susulan): ?>
+                <span class="badge bg-info text-dark" style="font-size: 9px;"><i class="bi bi-link-45deg"></i> SUSULAN</span>
+            <?php endif; ?>
+        </div>
+
         <div class="small">
             <?php if ($filter == 'history'): ?>
-                <span class="text-success fw-bold">
-                    URN: <?= htmlspecialchars($row['nomor_urn'] ?? '-') ?>
-                </span>
-                <span class="text-muted mx-1">|</span>
-                <span class="text-muted">
-                    <i class="bi bi-person"></i> <?= htmlspecialchars($row['nama_pic'] ?? 'No PIC') ?>
-                </span>
-            <?php elseif ($row['status'] == 1): ?>
-                <span class="badge bg-secondary">Jml: <?= $row['jumlah'] ?></span>
+                <div class="d-flex border-top pt-1 mt-1 align-items-center">
+                    <div style="min-width: 150px;" class="text-success fw-bold">
+                        <i class="bi bi-hash"></i> <?= htmlspecialchars($row['nomor_urn'] ?? '-') ?>
+                    </div>
+                    <div class="text-muted border-start ps-2">
+                        <i class="bi bi-person-fill"></i> <?= htmlspecialchars($row['nama_pic'] ?? 'No PIC') ?>
+                    </div>
+                </div>
+            <?php elseif ($row['status'] == 1 || $row['status'] == 3): ?>
+                <span class="badge bg-secondary">Jml: <?= $row['jumlah'] ?? 0 ?></span>
                 <span class="ms-1 text-muted">Vendor: <?= htmlspecialchars($row['nama_vendor'] ?? '-') ?></span>
             <?php endif; ?>
         </div>
@@ -73,32 +86,30 @@ if (mysqli_num_rows($query_antrian) > 0):
     <td>
         <div class="fw-bold">
             <?php if ($filter !== 'history'): ?>
-                <span class="editable-ekspedisi"
-                    contenteditable="true"
-                    onfocus="stopRefresh()"
-                    onblur="updateEkspedisi(<?= $row['id'] ?>, this.innerText, this)">
+                <span class="editable-ekspedisi" contenteditable="true" onfocus="stopRefresh()" onblur="updateEkspedisi(<?= $row['id'] ?>, this.innerText, this)">
                     <?= htmlspecialchars($row['ekspedisi'] ?? '') ?>
                 </span>
             <?php else: ?>
                 <span class="text-dark"><?= htmlspecialchars($row['ekspedisi'] ?? '') ?></span>
             <?php endif; ?>
         </div>
-
-        <div class="small text-muted">
-            <?= htmlspecialchars($row['nomor_hp'] ?? '-') ?>
-        </div>
+        <div class="small text-muted"><?= htmlspecialchars($row['nomor_hp'] ?? '-') ?></div>
     </td>
 
     <td class="text-center">
         <?php if ($row['status'] == 0): ?>
             <button class="btn btn-primary btn-sm px-3 shadow-sm fw-bold" onclick="bukaModalProsesAwal(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
-                <i class="bi bi-gear-fill me-1"></i> PROSES
+                <i class="bi bi-gear-fill"></i> PROSES
             </button>
         <?php elseif ($row['status'] == 1 || $row['status'] == 3): ?>
             <button class="btn btn-warning btn-sm px-3 shadow-sm fw-bold" onclick="bukaModalVerifikasi(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
-                <i class="bi bi-shield-check me-1"></i> VERIFIKASI
+                <i class="bi bi-shield-check"></i> VERIFIKASI
             </button>
         <?php else: ?>
+            <button class="btn btn-outline-dark btn-sm px-2 shadow-sm fw-bold mb-1 w-100"
+                    onclick='lihatDetailHistory(<?= json_encode($row) ?>)' style="font-size: 10px;">
+                <i class="bi bi-info-circle"></i> DETAIL
+            </button>
             <?php
                 $badgeClass = "bg-secondary";
             $statusText = "FINISHED";
@@ -115,13 +126,11 @@ if (mysqli_num_rows($query_antrian) > 0):
                 $statusText = "LINKED";
             }
             ?>
-            <span class="badge <?= $badgeClass ?> px-2 shadow-sm" style="font-size: 11px;">
-                <?= $statusText ?>
-            </span>
+            <span class="badge <?= $badgeClass ?> px-2 d-block" style="font-size: 9px;"><?= $statusText ?></span>
         <?php endif; ?>
     </td>
 </tr>
-    <?php endwhile;
+<?php endwhile;
 else: ?>
     <tr>
         <td colspan="4" class="text-center py-5 text-muted">

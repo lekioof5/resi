@@ -10,10 +10,8 @@ if (!isset($_SESSION['status_login'])) {
 }
 
 // Ambil data yang statusnya 3 (Pending)
-$query = mysqli_query($koneksi, "SELECT id, nomor_resi, nama_vendor, nomor_invoice
-                                 FROM scans
-                                 WHERE status = 3
-                                 ORDER BY waktu_pending DESC");
+$pic_now = $_SESSION['nama_user'];
+$query = mysqli_query($koneksi, "SELECT id, nomor_resi, nama_vendor, nomor_invoice FROM scans WHERE status = 3 AND nama_pic = '$pic_now'");
 
 $data = [];
 while ($row = mysqli_fetch_assoc($query)) {

@@ -18,6 +18,17 @@ $query_antrian = mysqli_query($koneksi, "SELECT * FROM scans WHERE is_validated 
         <h4 class="fw-bold mb-0">DASHBOARD VALIDASI</h4>
         <p class="text-muted small">Halo, <?= $_SESSION['nama_user'] ?></p>
     </div>
+    <div class="input-group mb-3 shadow-sm" style="max-width: 400px;">
+        <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" id="globalSearchInput"
+            class="form-control border-start-0 ps-0"
+            placeholder="Cari Resi atau URN..."
+            onkeypress="handleSearchKeyPress(event)"
+            style="box-shadow: none; border-color: #dee2e6;">
+        <button id="btnSearchGlobal" class="btn btn-dark fw-bold px-3" onclick="executeGlobalSearch()">CARI</button>
+    </div>
     <div class="text-end">
         <?php if ($_SESSION['role'] == 'admin'): ?>
             <button class="btn btn-primary btn-sm fw-bold px-3 me-2" data-bs-toggle="modal" data-bs-target="#manageUserModal">
@@ -85,5 +96,6 @@ if ($_SESSION['role'] == 'admin') {
 }
 include "includes/modal_proses_awal.php";
 include "includes/modal_proses.php";
+include "includes/modal_detail.php";
 include "includes/footer.php";
 ?>

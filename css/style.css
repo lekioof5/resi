@@ -191,3 +191,33 @@ main {
 	border: 1px solid #0d6efd;
 	box-shadow: 0 0 5px rgba(13, 110, 253, 0.2);
 }
+
+/* Container informasi di dalam cell */
+.history-info-grid {
+	display: grid;
+	grid-template-columns: 150px 1fr; /* URN dapet 150px, sisa buat PIC */
+	gap: 10px;
+	margin-top: 4px;
+	padding-top: 4px;
+	border-top: 1px solid #eee;
+}
+
+/* Style khusus untuk baris susulan agar beda dengan awal */
+tr.table-light {
+	background-color: #f8f9fa !important;
+}
+
+tr.table-light td {
+	border-left: 4px solid #0dcaf0; /* Beri garis biru di samping untuk susulan */
+}
+
+#globalSearchInput:focus {
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: #dee2e6 !important; /* Warna border tetap abu-abu standar */
+}
+
+/* Memastikan ikon di sebelahnya tidak berubah warna saat input aktif */
+.input-group:focus-within .input-group-text {
+	border-color: #dee2e6 !important;
+}
