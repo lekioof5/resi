@@ -63,8 +63,28 @@
 
                     <div id="field_proses" class="verif-extra-field d-none">
                         <div class="p-3 bg-light rounded-3 border-start border-success border-4">
-                            <label class="small fw-bold mb-1 text-success">NOMOR URN</label>
-                            <input type="text" name="nomor_urn" class="form-control border-success" placeholder="Masukkan Nomor URN">
+                            <div class="row mb-2">
+                                <div class="col-md-8">
+                                    <label class="small fw-bold mb-1 text-success">NAMA VENDOR / PENGIRIM</label>
+                                    <input type="text" name="nama_vendor_proses" class="form-control border-success mb-2" placeholder="Contoh: PT. Maju Jaya">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small fw-bold mb-1 text-success">JUMLAH</label>
+                                    <input type="number" id="input_qty_verif" name="jumlah_proses" class="form-control border-success" value="1" min="1" onchange="generateUrnVerif()" onkeyup="generateUrnVerif()">
+                                </div>
+                            </div>
+
+                            <hr class="my-2 text-success opacity-25">
+
+                            <div id="container_urn_verif">
+                                <div class="mb-2">
+                                    <label class="small fw-bold mb-1 text-success">NOMOR URN 1</label>
+                                    <input type="text" name="nomor_urn[]" class="form-control border-success" placeholder="Masukkan Nomor URN">
+                                </div>
+                            </div>
+
+                            <label class="small fw-bold mb-1 text-muted mt-2 text-uppercase">Catatan (Opsional)</label>
+                            <textarea name="catatan_proses" class="form-control border-secondary" rows="2" placeholder="Tambahkan catatan jika perlu..."></textarea>
                         </div>
                     </div>
 
@@ -75,10 +95,19 @@
                                 <option value="">-- Memuat Data Pending... --</option>
                             </select>
 
-                            <label class="small fw-bold mb-1 text-success text-uppercase">Input Nomor URN (Untuk Keduanya):</label>
-                            <input type="text" name="nomor_urn_resolve" class="form-control border-success mb-2" id="input_urn_resolve" placeholder="Masukkan Nomor URN">
+                            <div class="row mb-2">
+                                <div class="col-md-12">
+                                    <label class="small fw-bold mb-1 text-info">JUMLAH DOKUMEN SUSULAN</label>
+                                    <input type="number" id="input_qty_resolve" name="jumlah_resolve" class="form-control border-info mb-2" value="1" min="1" onchange="generateUrnResolve()" onkeyup="generateUrnResolve()">
+                                </div>
+                            </div>
 
-                            <small class="text-muted d-block mt-2">Pilih data pending. URN ini akan otomatis diterapkan pada resi utama dan resi susulan ini.</small>
+                            <div id="container_urn_resolve">
+                                <label class="small fw-bold mb-1 text-success text-uppercase">Input Nomor URN:</label>
+                                <input type="text" name="nomor_urn_resolve[]" class="form-control border-success mb-2" placeholder="Masukkan Nomor URN" required>
+                            </div>
+
+                            <small class="text-muted d-block mt-2">Setiap URN yang diinput akan tercatat sebagai dokumen baru yang melengkapi resi pending di atas.</small>
                         </div>
                     </div>
 
@@ -93,8 +122,18 @@
 
                     <div id="field_reject" class="verif-extra-field d-none">
                         <div class="p-3 bg-light rounded-3 border-start border-danger border-4">
+                            <div class="row mb-2">
+                                <div class="col-md-8">
+                                    <label class="small fw-bold mb-1 text-danger">NAMA VENDOR (DI REJECT)</label>
+                                    <input type="text" name="nama_vendor_reject" class="form-control border-danger mb-2" placeholder="Contoh: PT. Salah Kirim">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small fw-bold mb-1 text-danger">QTY ITEM</label>
+                                    <input type="number" name="jumlah_reject" class="form-control border-danger" value="1" min="1">
+                                </div>
+                            </div>
                             <label class="small fw-bold mb-1 text-danger">ALASAN REJECT</label>
-                            <textarea name="alasan_reject" class="form-control" rows="2" placeholder="Sebutkan alasan penolakan..."></textarea>
+                            <textarea name="alasan_reject" class="form-control border-danger" rows="2" placeholder="Sebutkan alasan penolakan..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -108,26 +147,61 @@
 </div>
 
 <script>
-function toggleVerifFields() {
-    // Sembunyikan semua field tambahan
-    document.querySelectorAll('.verif-extra-field').forEach(el => el.classList.add('d-none'));
+function generateUrnVerif() {
+    const qty = document.getElementById('input_qty_verif').value;
+    const container = document.getElementById('container_urn_verif');
 
-    // Reset required attributes
+    // Simpan data yang sudah diketik agar tidak hilang
+    const currentValues = Array.from(container.querySelectorAll('input[name="nomor_urn[]"]')).map(el => el.value);
+
+    container.innerHTML = '';
+    for (let i = 1; i <= qty; i++) {
+        const val = currentValues[i-1] ? currentValues[i-1] : '';
+        container.innerHTML += `
+            <div class="mb-2">
+                <label class="small fw-bold mb-1 text-success">NOMOR URN ${i}</label>
+                <input type="text" name="nomor_urn[]" class="form-control border-success"
+                       placeholder="Masukkan Nomor URN ${i}" value="${val}" required>
+            </div>
+        `;
+    }
+}
+
+function generateUrnResolve() {
+    const qty = document.getElementById('input_qty_resolve').value;
+    const container = document.getElementById('container_urn_resolve');
+    const currentValues = Array.from(container.querySelectorAll('input[name="nomor_urn_resolve[]"]')).map(el => el.value);
+
+    container.innerHTML = '<label class="small fw-bold mb-1 text-success text-uppercase">Input Nomor URN:</label>';
+    for (let i = 1; i <= qty; i++) {
+        const val = currentValues[i-1] ? currentValues[i-1] : '';
+        container.innerHTML += `
+            <input type="text" name="nomor_urn_resolve[]" class="form-control border-success mb-2"
+                   placeholder="Masukkan Nomor URN ${i}" value="${val}" required>
+        `;
+    }
+}
+
+function toggleVerifFields() {
+    document.querySelectorAll('.verif-extra-field').forEach(el => el.classList.add('d-none'));
     document.querySelectorAll('.verif-extra-field input, .verif-extra-field textarea, .verif-extra-field select').forEach(el => el.required = false);
 
     if (document.getElementById('radio_proses').checked) {
         document.getElementById('field_proses').classList.remove('d-none');
-        document.querySelector('input[name="nomor_urn"]').required = true;
+        // Set vendor dan semua URN menjadi required
+        document.querySelector('input[name="nama_vendor_proses"]').required = true;
+        document.querySelectorAll('input[name="nomor_urn[]"]').forEach(el => el.required = true);
     }
+    // ... (sisanya tetap seperti kode lama Anda)
     else if (document.getElementById('radio_resolve').checked) {
         document.getElementById('field_resolve').classList.remove('d-none');
         document.getElementById('select_pending_data').required = true;
         document.getElementById('input_urn_resolve').required = true;
-        loadPendingOptions(); // Panggil data pending dari database
+        loadPendingOptions();
     }
     else if (document.getElementById('radio_pending').checked) {
         document.getElementById('field_pending').classList.remove('d-none');
-        document.querySelector('input[name="nama_vendor"]').required = true;
+        document.querySelector('#field_pending input[name="nama_vendor"]').required = true;
         document.querySelector('input[name="nomor_invoice"]').required = true;
     }
     else if (document.getElementById('radio_reject').checked) {

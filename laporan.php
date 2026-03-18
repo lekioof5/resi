@@ -15,16 +15,16 @@ $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
 // Query Data Utama
 $query = "SELECT * FROM scans
           WHERE is_validated = 1
-          AND MONTH(waktu_validasi) = '$bulan'
-          AND YEAR(waktu_validasi) = '$tahun'
-          ORDER BY waktu_validasi DESC";
+          AND MONTH(waktu_proses) = '$bulan'
+          AND YEAR(waktu_proses) = '$tahun'
+          ORDER BY waktu_proses DESC";
 $result = mysqli_query($koneksi, $query);
 
 // Query Ringkasan (Total per Kurir)
 $query_summary = "SELECT ekspedisi, COUNT(*) as total FROM scans
                   WHERE is_validated = 1
-                  AND MONTH(waktu_validasi) = '$bulan'
-                  AND YEAR(waktu_validasi) = '$tahun'
+                  AND MONTH(waktu_proses) = '$bulan'
+                  AND YEAR(waktu_proses) = '$tahun'
                   GROUP BY ekspedisi ORDER BY total DESC";
 $summary_result = mysqli_query($koneksi, $query_summary);
 ?>
@@ -106,7 +106,8 @@ for ($y = date('Y'); $y >= 2024; $y--) {
                         <th>No. Resi</th>
                         <th>Ekspedisi</th>
                         <th>Scan Masuk</th>
-                        <th>Validasi</th>
+                        <th>Pending</th>
+                        <th>Proses</th>
                         <th>PIC Verifikator</th>
                     </tr>
                 </thead>
@@ -118,7 +119,8 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                         <td class="fw-bold"><?= $row['nomor_resi'] ?></td>
                         <td><span class="badge bg-info text-dark"><?= $row['ekspedisi'] ?></span></td>
                         <td><small><?= $row['waktu_masuk'] ?></small></td>
-                        <td><small><?= $row['waktu_validasi'] ?></small></td>
+                        <td><small><?= $row['waktu_pending'] ?></small></td>
+                        <td><small><?= $row['waktu_proses'] ?></small></td>
                         <td><i class="bi bi-person text-primary"></i> <?= $row['nama_pic'] ?></td>
                     </tr>
                     <?php endwhile; ?>

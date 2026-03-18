@@ -64,26 +64,22 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 });
 
-// --- FUNGSI PENCARIAN GLOBAL ---
+// --- 1. Fungsi Handle Keypress (Enter) ---
 function handleSearchKeyPress(e) {
 	if (e.key === "Enter") {
 		executeGlobalSearch();
 	}
 }
 
+// --- 2. Fungsi Eksekusi Pencarian ---
 function executeGlobalSearch() {
 	const input = document.getElementById("globalSearchInput");
-	if (!input) return;
-
-	const keyword = input.value.trim();
-
-	if (keyword === "") {
-		alert("Silakan masukkan nomor resi atau URN.");
-		return;
-	}
-
-	// Tampilkan feedback loading pada tombol jika ada
 	const btn = document.getElementById("btnSearchGlobal");
+	const keyword = input.value.trim().toUpperCase();
+
+	if (keyword === "") return;
+
+	// Loading State
 	if (btn) btn.disabled = true;
 
 	fetch(`get_search_resi.php?keyword=${encodeURIComponent(keyword)}`)
@@ -92,15 +88,33 @@ function executeGlobalSearch() {
 			if (btn) btn.disabled = false;
 
 			if (data.error) {
-				alert("Data tidak ditemukan di database.");
+				alert("Data tidak ditemukan di database!");
 			} else {
-				// KUNCINYA: Memanggil fungsi yang ada di includes/modal_detail.php
-				if (typeof lihatDetailHistory === "function") {
-					lihatDetailHistory(data);
+				// Tentukan target tab (waiting, pending, history)
+				let targetTab = "waiting";
+				if (data.status == 1) targetTab = "waiting";
+				else if (data.status == 3) targetTab = "pending";
+				else if ([2, 4, 5].includes(parseInt(data.status)))
+					targetTab = "history";
+
+				// Cari tombol tab yang sesuai di index2.php
+				const tabButton = document.querySelector(
+					`[onclick*="filterAntrian('${targetTab}'"]`,
+				);
+
+				// Panggil fungsi dari realtime-antrian.js
+				if (typeof filterAntrian === "function") {
+					filterAntrian(targetTab, tabButton);
+
+					// Highlight baris setelah tabel terisi (jeda 1.2 detik karena ada spinner)
+					setTimeout(() => {
+						highlightRow(keyword);
+					}, 1200);
+
 					input.value = "";
 				} else {
-					console.error(
-						"Fungsi lihatDetailHistory tidak ditemukan. Pastikan includes/modal_detail.php sudah di-include.",
+					alert(
+						"Sistem gagal memindahkan tab (Fungsi filterAntrian tidak ditemukan).",
 					);
 				}
 			}
@@ -109,4 +123,52 @@ function executeGlobalSearch() {
 			if (btn) btn.disabled = false;
 			console.error("Search Error:", err);
 		});
+}
+
+// --- 3. Fungsi Memberi Warna pada Baris ---
+function highlightRow(keyword) {
+	const container = document.getElementById("tabel-antrian-live");
+	if (!container) return;
+
+	const rows = container.querySelectorAll("tbody tr");
+	let found = false;
+
+	rows.forEach((row) => {
+		if (row.innerText.toUpperCase().includes(keyword)) {
+			row.style.transition = "all 0.5s ease";
+			row.style.backgroundColor = "#fff3cd"; // Kuning
+			row.style.borderLeft = "5px solid #ffc107";
+
+			row.scrollIntoView({ behavior: "smooth", block: "center" });
+			found = true;
+
+			setTimeout(() => {
+				row.style.backgroundColor = "";
+				row.style.borderLeft = "";
+			}, 5000);
+		}
+	});
+}
+
+function generateUrnInputs() {
+	const jumlah = document.getElementById("input_jumlah_dokumen").value;
+	const container = document.getElementById("container_urn_dynamic");
+
+	// Simpan nilai URN yang sudah diketik agar tidak hilang saat jumlah berubah
+	const existingUrns = Array.from(
+		container.querySelectorAll('input[name="urn[]"]'),
+	).map((input) => input.value);
+
+	container.innerHTML = ""; // Kosongkan container
+
+	for (let i = 1; i <= jumlah; i++) {
+		const val = existingUrns[i - 1] ? existingUrns[i - 1] : "";
+		container.innerHTML += `
+            <div class="mb-2">
+                <label class="small fw-bold">Nomor URN ${i}</label>
+                <input type="text" name="urn[]" class="form-control"
+                       placeholder="Masukkan URN ${i}" value="${val}" required>
+            </div>
+        `;
+	}
 }

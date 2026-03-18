@@ -86,6 +86,7 @@ $query_antrian = mysqli_query($koneksi, "SELECT * FROM scans WHERE is_validated 
 </div>
 
 <script src="js/realtime-antrian.js"></script>
+<script src="js/script.js"></script>
 
 <?php
 include "includes/modal_verifikasi.php";

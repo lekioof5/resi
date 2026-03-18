@@ -211,10 +211,15 @@ tr.table-light td {
 	border-left: 4px solid #0dcaf0; /* Beri garis biru di samping untuk susulan */
 }
 
+#table_antrian tbody tr {
+	transition: background-color 0.5s ease;
+}
+
+/* Hilangkan cahaya biru input seperti permintaan sebelumnya */
 #globalSearchInput:focus {
 	outline: none !important;
 	box-shadow: none !important;
-	border-color: #dee2e6 !important; /* Warna border tetap abu-abu standar */
+	border-color: #dee2e6 !important;
 }
 
 /* Memastikan ikon di sebelahnya tidak berubah warna saat input aktif */
