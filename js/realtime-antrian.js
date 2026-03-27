@@ -114,13 +114,18 @@ function bukaModalVerifikasi(id, resi) {
 function updateEkspedisi(id, nilaiBaru, element) {
 	if (!element) return;
 
+	// 1. Ubah input menjadi KAPITAL (Visual & Data)
+	const nilaiKapital = nilaiBaru.trim().toUpperCase();
+	element.innerText = nilaiKapital; // Paksa teks di tabel jadi kapital
+
 	// Beri tanda warna biru saat sedang proses
 	element.classList.add("text-primary");
 
 	fetch("proses_update_ekspedisi.php", {
 		method: "POST",
 		headers: { "Content-Type": "application/x-www-form-urlencoded" },
-		body: `id=${id}&ekspedisi=${encodeURIComponent(nilaiBaru.trim())}`,
+		// 2. Kirim nilai yang sudah di-KAPITAL-kan
+		body: `id=${id}&ekspedisi=${encodeURIComponent(nilaiKapital)}`,
 	})
 		.then((response) => response.text())
 		.then((data) => {

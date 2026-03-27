@@ -86,14 +86,16 @@ if (mysqli_num_rows($query_antrian) > 0):
     <td>
         <div class="fw-bold">
             <?php if ($filter !== 'history'): ?>
-                <span class="editable-ekspedisi" contenteditable="true" onfocus="stopRefresh()" onblur="updateEkspedisi(<?= $row['id'] ?>, this.innerText, this)">
-                    <?= htmlspecialchars($row['ekspedisi'] ?? '') ?>
+                <span class="editable-ekspedisi text-uppercase" contenteditable="true"
+                    onfocus="stopRefresh()"
+                    onblur="updateEkspedisi(<?= $row['id'] ?>, this.innerText.toUpperCase(), this)">
+                    <?= strtoupper(htmlspecialchars($row['ekspedisi'] ?? '')) ?>
                 </span>
             <?php else: ?>
-                <span class="text-dark"><?= htmlspecialchars($row['ekspedisi'] ?? '') ?></span>
+                <span class="text-dark text-uppercase"><?= strtoupper(htmlspecialchars($row['ekspedisi'] ?? '')) ?></span>
             <?php endif; ?>
         </div>
-        <div class="small text-muted"><?= htmlspecialchars($row['nomor_hp'] ?? '-') ?></div>
+        <div class="small text-muted"><?= htmlspecialchars($row['nomor_hp'] ?? '') ?></div>
     </td>
 
     <td class="text-center">
