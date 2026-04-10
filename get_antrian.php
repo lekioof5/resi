@@ -101,11 +101,11 @@ if (mysqli_num_rows($query_antrian) > 0):
     <td class="text-center">
         <?php if ($row['status'] == 0): ?>
             <button class="btn btn-primary btn-sm px-3 shadow-sm fw-bold" onclick="bukaModalProsesAwal(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
-                <i class="bi bi-gear-fill"></i> PROSES
+                <i class="bi bi-gear-fill"></i> TERIMA
             </button>
         <?php elseif ($row['status'] == 1 || $row['status'] == 3): ?>
             <button class="btn btn-warning btn-sm px-3 shadow-sm fw-bold" onclick="bukaModalVerifikasi(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
-                <i class="bi bi-shield-check"></i> VERIFIKASI
+                <i class="bi bi-shield-check"></i> PROSES
             </button>
         <?php else: ?>
             <button class="btn btn-outline-dark btn-sm px-2 shadow-sm fw-bold mb-1 w-100"
