@@ -3,19 +3,19 @@ session_start();
 include "koneksi.php";
 
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'waiting';
-$my_name = $_SESSION['nama_user']; // Ambil nama user dari session
+$my_name = $_SESSION['nama_user'];
 
 switch ($filter) {
     case 'received':
-        // HANYA dokumen yang diterima oleh saya sendiri
+        // Tab PROSES: Hanya tampilkan dokumen yang DITERIMA oleh saya sendiri
+        // Agar PIC lain tidak menginput URN pada dokumen yang sedang dipegang PIC ini
         $sql = "SELECT *, waktu_receive as waktu_tampil FROM scans
                 WHERE status = 1 AND nama_pic = '$my_name'
-                ORDER BY waktu_receive DESC";
+                ORDER BY waktu_receive ASC";
         $label_waktu = "DITERIMA";
         break;
 
     case 'pending':
-        // HANYA dokumen yang di-pending oleh saya sendiri
         $sql = "SELECT *, waktu_pending as waktu_tampil FROM scans
                 WHERE status = 3 AND nama_pic = '$my_name'
                 ORDER BY waktu_pending DESC";
@@ -23,15 +23,17 @@ switch ($filter) {
         break;
 
     case 'history':
-        // SEMUA orang bisa melihat riwayat SEMUA orang (Global)
-        $sql = "SELECT *, waktu_masuk as waktu_tampil FROM scans
+        // Tab HISTORY: Global (Semua orang bisa melihat hasil akhir semua orang)
+        $sql = "SELECT *,
+                COALESCE(waktu_proses, waktu_reject, waktu_receive, waktu_masuk) as waktu_tampil
+                FROM scans
                 WHERE status IN (2, 4, 5)
-                ORDER BY id DESC LIMIT 50";
-        $label_waktu = "MASUK";
+                ORDER BY id DESC LIMIT 100";
+        $label_waktu = "SELESAI";
         break;
 
     default: // 'waiting'
-        // SEMUA orang bisa melihat antrian baru (Global)
+        // Tab MASUK: Global (Semua orang bisa melihat antrian baru untuk segera diambil/diterima)
         $sql = "SELECT *, waktu_masuk as waktu_tampil FROM scans
                 WHERE status = 0
                 ORDER BY waktu_masuk ASC";
@@ -56,79 +58,60 @@ if (mysqli_num_rows($query_antrian) > 0):
     </td>
 
     <td>
-        <div class="d-flex align-items-center mb-1">
-            <div class="fw-bold text-dark me-2">
-                <?= htmlspecialchars($row['nomor_resi'] ?? '') ?>
-            </div>
-
+        <div class="fw-bold text-dark mb-1">
+            <?= htmlspecialchars($row['nomor_resi'] ?? '') ?>
             <?php if ($is_susulan): ?>
-                <span class="badge bg-info text-dark" style="font-size: 9px;"><i class="bi bi-link-45deg"></i> SUSULAN</span>
+                <span class="badge bg-info text-dark ms-1" style="font-size: 9px;">SUSULAN</span>
             <?php endif; ?>
         </div>
-
         <div class="small">
-            <?php if ($filter == 'history'): ?>
-                <div class="d-flex border-top pt-1 mt-1 align-items-center">
-                    <div style="min-width: 150px;" class="text-success fw-bold">
-                        <i class="bi bi-hash"></i> <?= htmlspecialchars($row['nomor_urn'] ?? '-') ?>
-                    </div>
-                    <div class="text-muted border-start ps-2">
-                        <i class="bi bi-person-fill"></i> <?= htmlspecialchars($row['nama_pic'] ?? 'No PIC') ?>
-                    </div>
-                </div>
-            <?php elseif ($row['status'] == 1 || $row['status'] == 3): ?>
-                <span class="badge bg-secondary">Jml: <?= $row['jumlah'] ?? 0 ?></span>
+            <?php if ($row['status'] == 0): ?>
+                <span class="text-muted italic">Menunggu keputusan...</span>
+            <?php else: ?>
+                <span class="badge bg-light text-dark border">Qty: <?= $row['jumlah'] ?? 0 ?></span>
                 <span class="ms-1 text-muted">Vendor: <?= htmlspecialchars($row['nama_vendor'] ?? '-') ?></span>
             <?php endif; ?>
         </div>
     </td>
 
     <td>
-        <div class="fw-bold">
-            <?php if ($filter !== 'history'): ?>
-                <span class="editable-ekspedisi text-uppercase" contenteditable="true"
+        <div class="fw-bold text-uppercase">
+            <?php if ($row['status'] == 0 || $row['status'] == 3): ?>
+                <span class="editable-ekspedisi" contenteditable="true"
                     onfocus="stopRefresh()"
                     onblur="updateEkspedisi(<?= $row['id'] ?>, this.innerText.toUpperCase(), this)">
                     <?= strtoupper(htmlspecialchars($row['ekspedisi'] ?? '')) ?>
                 </span>
             <?php else: ?>
-                <span class="text-dark text-uppercase"><?= strtoupper(htmlspecialchars($row['ekspedisi'] ?? '')) ?></span>
+                <?= strtoupper(htmlspecialchars($row['ekspedisi'] ?? '')) ?>
             <?php endif; ?>
         </div>
-        <div class="small text-muted"><?= htmlspecialchars($row['nomor_hp'] ?? '') ?></div>
     </td>
 
     <td class="text-center">
         <?php if ($row['status'] == 0): ?>
-            <button class="btn btn-primary btn-sm px-3 shadow-sm fw-bold" onclick="bukaModalProsesAwal(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
-                <i class="bi bi-gear-fill"></i> TERIMA
+            <button class="btn btn-success btn-sm px-3 shadow-sm fw-bold"
+                    onclick="bukaModalProsesAwal(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
+                <i class="bi bi-check-circle"></i> TERIMA / REJECT
             </button>
-        <?php elseif ($row['status'] == 1 || $row['status'] == 3): ?>
-            <button class="btn btn-warning btn-sm px-3 shadow-sm fw-bold" onclick="bukaModalVerifikasi(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
-                <i class="bi bi-shield-check"></i> PROSES
+
+        <?php elseif ($row['status'] == 1): ?>
+            <button class="btn btn-primary btn-sm px-3 shadow-sm fw-bold"
+                    onclick="bukaModalVerifikasi(<?= $row['id'] ?>, '<?= $row['nomor_resi'] ?>')">
+                <i class="bi bi-pencil-square"></i> INPUT URN
             </button>
+
+        <?php elseif ($row['status'] == 3): ?>
+            <button class="btn btn-sm btn-info text-white fw-bold"
+                    onclick="openModalPending('<?= $row['id'] ?>', '<?= $row['nomor_resi'] ?>')">
+                <i class="bi bi-check2-circle"></i> SELESAIKAN
+            </button>
+
         <?php else: ?>
-            <button class="btn btn-outline-dark btn-sm px-2 shadow-sm fw-bold mb-1 w-100"
+            <button class="btn btn-outline-dark btn-sm px-2 w-100"
                     onclick='lihatDetailHistory(<?= json_encode($row) ?>)' style="font-size: 10px;">
-                <i class="bi bi-info-circle"></i> DETAIL
+                DETAIL
             </button>
-            <?php
-                $badgeClass = "bg-secondary";
-            $statusText = "FINISHED";
-            if ($row['status'] == 2) {
-                $badgeClass = "bg-success";
-                $statusText = "PROCESSED";
-            }
-            if ($row['status'] == 4) {
-                $badgeClass = "bg-danger";
-                $statusText = "REJECTED";
-            }
-            if ($row['status'] == 5) {
-                $badgeClass = "bg-info text-dark";
-                $statusText = "LINKED";
-            }
-            ?>
-            <span class="badge <?= $badgeClass ?> px-2 d-block" style="font-size: 9px;"><?= $statusText ?></span>
         <?php endif; ?>
     </td>
 </tr>

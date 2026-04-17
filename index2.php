@@ -44,12 +44,12 @@ $query_antrian = mysqli_query($koneksi, "SELECT * FROM scans WHERE is_validated 
             <ul class="nav nav-pills gap-2" id="pills-tab" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active fw-bold btn-sm" onclick="filterAntrian('waiting', this)">
-                        🆕 WAITING <span class="badge bg-danger ms-1" id="count-waiting">0</span>
+                        🆕 MASUK <span class="badge bg-danger ms-1" id="count-waiting">0</span>
                     </button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link fw-bold btn-sm" onclick="filterAntrian('received', this)">
-                        📥 RECEIVED <span class="badge bg-primary ms-1" id="count-received">0</span>
+                        ⚙️ PROSES <span class="badge bg-primary ms-1" id="count-received">0</span>
                     </button>
                 </li>
                 <li class="nav-item">
@@ -68,18 +68,18 @@ $query_antrian = mysqli_query($koneksi, "SELECT * FROM scans WHERE is_validated 
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive mt-3">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark"> <tr>
-                        <th class="ps-4 col-time-fixed">WAKTU</th>
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">WAKTU</th>
                         <th>DETAIL DOKUMEN / RESI</th>
                         <th>EKSPEDISI</th>
-                        <th class="text-center" style="width: 150px;">AKSI</th>
+                        <th class="text-center">AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="tabel-antrian-live">
-                    <tr><td colspan="4" class="text-center py-5 text-muted">Menghubungkan ke server...</td></tr>
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </div>
@@ -90,6 +90,7 @@ $query_antrian = mysqli_query($koneksi, "SELECT * FROM scans WHERE is_validated 
 
 <?php
 include "includes/modal_verifikasi.php";
+include "includes/modal_verifikasi_pending.php";
 include "includes/modal_manual.php";
 include "includes/modal_profil.php";
 if ($_SESSION['role'] == 'admin') {

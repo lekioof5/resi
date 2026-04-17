@@ -1,145 +1,51 @@
 <div class="modal fade" id="modalVerifikasi" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-warning text-dark border-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold"><i class="bi bi-search me-2"></i>VERIFIKASI DOKUMEN</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-primary text-white border-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>INPUT DATA PENYELESAIAN</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="proses_verifikasi.php" method="POST">
+            <form action="proses_verifikasi_cepat.php" method="POST">
                 <div class="modal-body p-4">
-                    <div class="mb-4">
+                    <div class="mb-4 text-center bg-light p-3 rounded-3 border">
                         <label class="text-muted small d-block">NOMOR RESI</label>
                         <h4 id="display_resi_verif" class="fw-bold text-dark mb-0">-</h4>
                         <input type="hidden" name="id" id="modal_id_verif">
                     </div>
 
-                    <label class="fw-bold small mb-2 text-secondary text-uppercase">Tentukan Tindakan:</label>
-                    <div class="d-flex flex-column gap-2 mb-4">
-                        <input type="radio" class="btn-check" name="tindakan" id="radio_proses" value="proses" onclick="toggleVerifFields()" required>
-                        <label class="btn btn-outline-success text-start p-3 border-2" for="radio_proses">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-check-circle-fill fs-4 me-3"></i>
-                                <div>
-                                    <div class="fw-bold">LANJUT PROSES</div>
-                                    <small class="opacity-75">Dokumen lengkap dan siap diproses</small>
-                                </div>
+                    <div class="p-3 bg-white rounded-3 border-start border-primary border-4 shadow-sm">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="small fw-bold mb-1 text-primary">JUMLAH DOKUMEN (QTY)</label>
+                                <input type="number" id="input_qty_verif" name="jumlah" class="form-control border-primary fw-bold"
+                                       value="1" min="1" onchange="generateUrnVerif()" onkeyup="generateUrnVerif()">
+                                <small class="text-muted" style="font-size: 10px;">Sesuaikan jumlah kolom URN di bawah</small>
                             </div>
-                        </label>
-
-                        <input type="radio" class="btn-check" name="tindakan" id="radio_resolve" value="resolve" onclick="toggleVerifFields()">
-                        <label class="btn btn-outline-info text-start p-3 border-2" for="radio_resolve">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-link-45deg fs-4 me-3"></i>
-                                <div>
-                                    <div class="fw-bold">TAUTKAN KE PENDING</div>
-                                    <small class="opacity-75">Dokumen ini adalah susulan/kekurangan</small>
-                                </div>
-                            </div>
-                        </label>
-
-                        <input type="radio" class="btn-check" name="tindakan" id="radio_pending" value="pending" onclick="toggleVerifFields()">
-                        <label class="btn btn-outline-warning text-start p-3 border-2" for="radio_pending">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-hourglass-split fs-4 me-3"></i>
-                                <div>
-                                    <div class="fw-bold">PENDING / KURANG</div>
-                                    <small class="opacity-75">Ada dokumen yang masih kurang</small>
-                                </div>
-                            </div>
-                        </label>
-
-                        <input type="radio" class="btn-check" name="tindakan" id="radio_reject" value="reject" onclick="toggleVerifFields()">
-                        <label class="btn btn-outline-danger text-start p-3 border-2" for="radio_reject">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-x-circle-fill fs-4 me-3"></i>
-                                <div>
-                                    <div class="fw-bold">REJECT / RETURN</div>
-                                    <small class="opacity-75">Salah kirim atau tidak sesuai</small>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div id="field_proses" class="verif-extra-field d-none">
-                        <div class="p-3 bg-light rounded-3 border-start border-success border-4">
-                            <div class="row mb-2">
-                                <div class="col-md-8">
-                                    <label class="small fw-bold mb-1 text-success">NAMA VENDOR / PENGIRIM</label>
-                                    <input type="text" name="nama_vendor_proses" class="form-control border-success mb-2" placeholder="Contoh: PT. Maju Jaya">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="small fw-bold mb-1 text-success">JUMLAH</label>
-                                    <input type="number" id="input_qty_verif" name="jumlah_proses" class="form-control border-success" value="1" min="1" onchange="generateUrnVerif()" onkeyup="generateUrnVerif()">
-                                </div>
-                            </div>
-
-                            <hr class="my-2 text-success opacity-25">
-
-                            <div id="container_urn_verif">
-                                <div class="mb-2">
-                                    <label class="small fw-bold mb-1 text-success">NOMOR URN 1</label>
-                                    <input type="text" name="nomor_urn[]" class="form-control border-success" placeholder="Masukkan Nomor URN">
-                                </div>
-                            </div>
-
-                            <label class="small fw-bold mb-1 text-muted mt-2 text-uppercase">Catatan (Opsional)</label>
-                            <textarea name="catatan_proses" class="form-control border-secondary" rows="2" placeholder="Tambahkan catatan jika perlu..."></textarea>
                         </div>
-                    </div>
 
-                    <div id="field_resolve" class="verif-extra-field d-none">
-                        <div class="p-3 bg-light rounded-3 border-start border-info border-4">
-                            <label class="small fw-bold mb-1 text-info text-uppercase">Cari Dokumen yang Dilengkapi:</label>
-                            <select name="id_data_lama" class="form-select border-info mb-3" id="select_pending_data">
-                                <option value="">-- Memuat Data Pending... --</option>
-                            </select>
+                        <hr class="my-3">
 
-                            <div class="row mb-2">
-                                <div class="col-md-12">
-                                    <label class="small fw-bold mb-1 text-info">JUMLAH DOKUMEN SUSULAN</label>
-                                    <input type="number" id="input_qty_resolve" name="jumlah_resolve" class="form-control border-info mb-2" value="1" min="1" onchange="generateUrnResolve()" onkeyup="generateUrnResolve()">
-                                </div>
+                        <div id="container_urn_verif">
+                            <div class="mb-2">
+                                <label class="small fw-bold mb-1 text-dark">NOMOR URN 1</label>
+                                <input type="text" name="nomor_urn[]" class="form-control border-primary text-uppercase"
+                                       placeholder="Masukkan Nomor URN 1" required oninput="this.value = this.value.toUpperCase()">
                             </div>
-
-                            <div id="container_urn_resolve">
-                                <label class="small fw-bold mb-1 text-success text-uppercase">Input Nomor URN:</label>
-                                <input type="text" name="nomor_urn_resolve[]" class="form-control border-success mb-2" placeholder="Masukkan Nomor URN" required>
-                            </div>
-
-                            <small class="text-muted d-block mt-2">Setiap URN yang diinput akan tercatat sebagai dokumen baru yang melengkapi resi pending di atas.</small>
                         </div>
-                    </div>
 
-                    <div id="field_pending" class="verif-extra-field d-none">
-                        <div class="p-3 bg-light rounded-3 border-start border-warning border-4">
-                            <label class="small fw-bold mb-1 text-warning">NAMA VENDOR</label>
-                            <input type="text" name="nama_vendor" class="form-control mb-2" placeholder="Contoh: PT. Maju Jaya">
-                            <label class="small fw-bold mb-1 text-warning">NOMOR INVOICE / DOKUMEN</label>
-                            <input type="text" name="nomor_invoice" class="form-control" placeholder="Masukkan nomor invoice">
-                        </div>
-                    </div>
-
-                    <div id="field_reject" class="verif-extra-field d-none">
-                        <div class="p-3 bg-light rounded-3 border-start border-danger border-4">
-                            <div class="row mb-2">
-                                <div class="col-md-8">
-                                    <label class="small fw-bold mb-1 text-danger">NAMA VENDOR (DI REJECT)</label>
-                                    <input type="text" name="nama_vendor_reject" class="form-control border-danger mb-2" placeholder="Contoh: PT. Salah Kirim">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="small fw-bold mb-1 text-danger">QTY ITEM</label>
-                                    <input type="number" name="jumlah_reject" class="form-control border-danger" value="1" min="1">
-                                </div>
-                            </div>
-                            <label class="small fw-bold mb-1 text-danger">ALASAN REJECT</label>
-                            <textarea name="alasan_reject" class="form-control border-danger" rows="2" placeholder="Sebutkan alasan penolakan..."></textarea>
+                        <div class="mt-3">
+                            <label class="small fw-bold mb-1 text-muted text-uppercase">Catatan Internal (Opsional)</label>
+                            <textarea name="catatan" class="form-control border-secondary" rows="2" placeholder="Tambahkan keterangan jika perlu..."></textarea>
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal">BATAL</button>
-                    <button type="submit" class="btn btn-dark fw-bold px-4">SIMPAN KEPUTUSAN</button>
+                    <button type="submit" class="btn btn-primary fw-bold px-4 shadow">
+                        <i class="bi bi-cloud-check-fill me-2"></i>SELESAIKAN DOKUMEN
+                    </button>
                 </div>
             </form>
         </div>
@@ -151,17 +57,22 @@ function generateUrnVerif() {
     const qty = document.getElementById('input_qty_verif').value;
     const container = document.getElementById('container_urn_verif');
 
-    // Simpan data yang sudah diketik agar tidak hilang
+    // Simpan nilai yang sudah diketik agar tidak hilang saat QTY diubah
     const currentValues = Array.from(container.querySelectorAll('input[name="nomor_urn[]"]')).map(el => el.value);
 
     container.innerHTML = '';
-    for (let i = 1; i <= qty; i++) {
+
+    // Batasi maksimal misal 20 agar tidak lag, tapi sesuaikan kebutuhan
+    const maxQty = Math.min(qty, 20);
+
+    for (let i = 1; i <= maxQty; i++) {
         const val = currentValues[i-1] ? currentValues[i-1] : '';
         container.innerHTML += `
             <div class="mb-2">
-                <label class="small fw-bold mb-1 text-success">NOMOR URN ${i}</label>
-                <input type="text" name="nomor_urn[]" class="form-control border-success"
-                       placeholder="Masukkan Nomor URN ${i}" value="${val}" required>
+                <label class="small fw-bold mb-1 text-dark">NOMOR URN ${i}</label>
+                <input type="text" name="nomor_urn[]" class="form-control border-primary text-uppercase"
+                       placeholder="Masukkan Nomor URN ${i}" value="${val}" required
+                       oninput="this.value = this.value.toUpperCase()">
             </div>
         `;
     }
