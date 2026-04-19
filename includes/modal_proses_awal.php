@@ -29,23 +29,33 @@
                     </div>
 
                     <div id="div_data_paket">
-                        <div class="mb-3">
-                            <label class="small fw-bold">ENTITY</label>
-                            <input type="text" name="entity" id="input_entity"
-                                class="form-control fw-bold text-uppercase"
-                                required
-                                oninput="this.value = this.value.toUpperCase()">
+                        <div id="section_input_normal">
+                            <div class="mb-3">
+                                <label class="small fw-bold">ENTITY</label>
+                                <input type="text" name="entity" id="input_entity" class="form-control fw-bold text-uppercase" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold">NAMA VENDOR / PENGIRIM</label>
+                                <input type="text" name="nama_vendor" id="input_vendor" class="form-control text-uppercase" placeholder="Masukkan nama vendor...">
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold">JUMLAH (QTY)</label>
+                                <input type="number" name="qty" id="input_qty" class="form-control" value="1" min="1">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="small fw-bold">NAMA VENDOR / PENGIRIM</label>
-                            <input type="text" name="nama_vendor" id="input_vendor" class="form-control text-uppercase" placeholder="Masukkan nama vendor...">
-                        </div>
-                        <div class="mb-3">
-                            <label class="small fw-bold">JUMLAH (QTY)</label>
-                            <input type="number" name="qty" id="input_qty" class="form-control" value="1" min="1">
+
+                        <div id="section_link_pending" class="d-none">
+                            <div class="p-3 bg-warning bg-opacity-10 border border-warning rounded-3 mb-3">
+                                <label class="small fw-bold text-warning-emphasis">TAUTKAN KE RESI PENDING:</label>
+                                <select name="id_data_lama" id="select_pending_data" class="form-select border-warning mb-3">
+                                    <option value="">-- Pilih Resi Utama --</option>
+                                </select>
+
+                                <label class="small fw-bold text-warning-emphasis">NOMOR URN (DOKUMEN INI):</label>
+                                <input type="text" name="nomor_urn_resolve[]" id="input_urn_susulan" class="form-control border-warning text-uppercase fw-bold" placeholder="Input URN...">
+                            </div>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label id="label_keterangan" class="small fw-bold text-muted">CATATAN TAMBAHAN</label>
                         <textarea name="keterangan_umum" class="form-control" rows="2" placeholder="Catatan..."></textarea>
@@ -80,7 +90,7 @@ function toggleOpsiAwal() {
         selectKategori.add(opt2);
     } else {
         header.className = "modal-header bg-danger text-white";
-        labelKategori.innerText = "ALASAN REJECT / PENDING";
+        labelKategori.innerText = "KATEGORI PENOLAKAN";
         selectKategori.className = "form-select border-danger";
 
         // Opsi untuk REJECT
@@ -94,16 +104,62 @@ function toggleOpsiAwal() {
 
 function toggleKategori() {
     const kategori = document.getElementById('select_kategori').value;
-    const divData = document.getElementById('div_data_paket');
+    const sectionNormal = document.getElementById('section_input_normal');
+    const sectionLink = document.getElementById('section_link_pending');
+    
+    // Elemen input untuk validasi required
+    const inputEntity = document.getElementById('input_entity');
     const inputVendor = document.getElementById('input_vendor');
-    const inputEntity = document.getElementById('input_entity'); // Tambahkan ini
+    const selectPending = document.getElementById('select_pending_data');
+    const inputUrn = document.getElementById('input_urn_susulan');
 
-    // Selalu tampilkan div data paket
-    divData.style.display = "block";
+    if (kategori === "susulan") {
+        // Tampilkan Link, Sembunyikan Normal
+        sectionNormal.classList.add('d-none');
+        sectionLink.classList.remove('d-none');
+        
+        // Atur Required
+        inputEntity.required = false;
+        inputVendor.required = false;
+        selectPending.required = true;
+        inputUrn.required = true;
 
-    // Validasi wajib isi
-    inputVendor.required = true;
-    inputEntity.required = true; // Entity wajib diisi manual
+        loadDataPending(); // Jalankan fungsi ambil data pending
+    } else {
+        // Tampilkan Normal, Sembunyikan Link
+        sectionNormal.classList.remove('d-none');
+        sectionLink.classList.add('d-none');
+        
+        // Atur Required
+        inputEntity.required = true;
+        inputVendor.required = true;
+        selectPending.required = false;
+        inputUrn.required = false;
+    }
+}
+
+// Fungsi AJAX untuk ambil data pending
+function loadDataPending() {
+    const select = document.getElementById('select_pending_data');
+    select.innerHTML = '<option value="">-- Memuat Data Pending Anda --</option>';
+
+    fetch('get_data_pending.php') // Memanggil file PHP Anda
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) {
+                select.innerHTML = '<option value="">Tidak ada resi pending atas nama Anda</option>';
+            } else {
+                select.innerHTML = '<option value="">-- Pilih Resi Utama --</option>';
+                data.forEach(item => {
+                    // Menampilkan Resi dan Vendor untuk memudahkan identifikasi
+                    select.innerHTML += `<option value="${item.id}">${item.nomor_resi} - ${item.nama_vendor}</option>`;
+                });
+            }
+        })
+        .catch(err => {
+            select.innerHTML = '<option value="">Gagal memuat data</option>';
+            console.error(err);
+        });
 }
 
 // Inisialisasi awal

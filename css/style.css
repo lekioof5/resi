@@ -1,228 +1,144 @@
 body {
-	background-color: #f4f7f6;
-	font-family:
-		"Inter",
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		sans-serif;
+    background-color: #f8f9fa; /* Lebih terang & bersih */
+    font-family: "Inter", -apple-system, sans-serif;
+    font-size: 0.875rem; /* Ukuran font standar profesional (14px) */
+    color: #333;
 }
 
+/* Container Utama lebih ramping */
 .scan-wrapper {
-	background: #ffffff;
-	border-top: 4px solid #212529;
-	border-radius: 8px;
-	padding: 40px;
+    background: #ffffff;
+    border-top: 3px solid #212529;
+    border-radius: 6px;
+    padding: 20px; /* Dikurangi dari 40px agar tidak makan ruang */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
+/* Input Scan lebih proporsional, tidak terlalu raksasa */
 .input-scan-field {
-	font-size: 1.5rem;
-	letter-spacing: 2px;
-	font-weight: 500;
-	border: 2px solid #dee2e6;
-	transition: all 0.3s;
+    font-size: 1.1rem; /* Ukuran lebih masuk akal */
+    letter-spacing: 1px;
+    font-weight: 600;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
 }
 
-.input-scan-field:focus {
-	border-color: #212529;
-	box-shadow: none;
-}
-
-.table-container {
-	max-height: 450px;
-	overflow-y: auto;
+/* Tabel lebih rapat (Compact Table) */
+.table {
+    font-size: 0.8rem; /* Font data tabel lebih kecil agar muat banyak */
 }
 
 .table thead th {
-	background-color: #f8f9fa;
-	font-size: 0.75rem;
-	text-transform: uppercase;
-	color: #6c757d;
-	border-bottom: 1px solid #dee2e6;
-	position: sticky;
-	top: 0;
-	z-index: 10;
+    background-color: #f1f3f5;
+    font-size: 0.7rem;
+    padding: 10px 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
 }
 
+.table tbody td {
+    padding: 8px; /* Padding lebih kecil agar baris lebih rapat */
+    vertical-align: middle;
+}
+
+/* Container Tabel lebih efisien */
+.table-container {
+    max-height: 500px; /* Ditambah dikit supaya scroll lebih jarang */
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+/* Card Styling */
 .card {
-	border: none;
-	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
 }
 
-/* Custom Scrollbar */
-.table-container::-webkit-scrollbar {
-	width: 5px;
-}
-.table-container::-webkit-scrollbar-track {
-	background: #f1f1f1;
-}
-.table-container::-webkit-scrollbar-thumb {
-	background: #ccc;
-	border-radius: 10px;
+.card-body {
+    padding: 15px;
 }
 
-/* Kunci lebar kolom waktu agar tetap sejajar */
-.col-time-fixed {
-	width: 150px;
-	white-space: nowrap;
-}
-
-/* Mempertegas tampilan tanggal yang berbeda hari */
-.text-date-old {
-	color: #dc3545; /* Warna merah tipis untuk menandakan dokumen hari sebelumnya */
-	font-weight: 600;
-}
-
-/* Sticky Footer Setup */
-html,
-body {
-	height: 100%;
-}
-
-body {
-	display: flex;
-	flex-direction: column;
-}
-
-main {
-	flex: 1 0 auto; /* Ini yang mendorong footer ke bawah */
-}
-
-.footer {
-	background-color: #ffffff;
-	z-index: 100;
-}
-
-.verif-extra-field {
-	animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-	from {
-		opacity: 0;
-		transform: translateY(-10px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-/* --- Dashboard Tab Styles --- */
+/* Nav Pills (Tab) lebih kecil & rapi */
 .nav-pills .nav-link {
-	border: 1px solid #e9ecef;
-	color: #6c757d;
-	transition: all 0.2s ease-in-out;
-	background-color: #fff;
-	margin-right: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.nav-pills .nav-link:hover {
-	background-color: #f8f9fa;
-	border-color: #dee2e6;
-}
-
-/* Warna saat Tab Aktif */
 .nav-pills .nav-link.active {
-	background-color: #212529 !important; /* Warna Hitam Elegan */
-	color: #ffffff !important;
-	border-color: #212529;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: #212529 !important;
 }
 
-/* --- Real-time Loader Styles --- */
-#refresh-loader {
-	transition: opacity 0.3s ease;
-}
-
-.opacity-0 {
-	opacity: 0;
-	pointer-events: none;
-}
-
-.opacity-100 {
-	opacity: 1;
-}
-
-/* Merapikan kolom waktu agar tidak bergeser */
-.col-time-fixed {
-	width: 110px;
-	white-space: nowrap;
-}
-
-/* Efek berkedip untuk reminder */
-#my-pending-badge {
-	animation: pulse-red 2s infinite;
-}
-
-@keyframes pulse-red {
-	0% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
-	}
-	70% {
-		transform: scale(1);
-		box-shadow: 0 0 0 5px rgba(220, 53, 69, 0);
-	}
-	100% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
-	}
-}
-
-/* Menandakan teks bisa diedit */
-.editable-ekspedisi {
-	cursor: pointer;
-	border-bottom: 1px dashed #ccc;
-	padding: 2px 4px;
-	border-radius: 4px;
-	transition: background 0.2s;
-}
-
-.editable-ekspedisi:hover {
-	background-color: #fff3cd; /* Warna kuning soft saat hover */
-	border-bottom: 1px solid #ffc107;
-}
-
-.editable-ekspedisi:focus {
-	outline: none;
-	background-color: #fff;
-	border: 1px solid #0d6efd;
-	box-shadow: 0 0 5px rgba(13, 110, 253, 0.2);
-}
-
-/* Container informasi di dalam cell */
+/* Info Grid di History */
 .history-info-grid {
-	display: grid;
-	grid-template-columns: 150px 1fr; /* URN dapet 150px, sisa buat PIC */
-	gap: 10px;
-	margin-top: 4px;
-	padding-top: 4px;
-	border-top: 1px solid #eee;
+    grid-template-columns: 120px 1fr; /* Dipersempit */
+    gap: 8px;
+    font-size: 0.75rem;
 }
 
-/* Style khusus untuk baris susulan agar beda dengan awal */
-tr.table-light {
-	background-color: #f8f9fa !important;
+/* Badge & Label */
+.badge {
+    font-weight: 500;
+    padding: 0.4em 0.6em;
 }
 
-tr.table-light td {
-	border-left: 4px solid #0dcaf0; /* Beri garis biru di samping untuk susulan */
+/* Footer Ramping */
+.footer {
+    font-size: 0.75rem;
+    padding: 10px 0 !important;
+    border-top: 1px solid #eee;
 }
 
-#table_antrian tbody tr {
-	transition: background-color 0.5s ease;
+/* Hilangkan dekorasi berlebih pada elemen form */
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 2px rgba(33, 37, 41, 0.1);
+    border-color: #212529;
 }
 
-/* Hilangkan cahaya biru input seperti permintaan sebelumnya */
-#globalSearchInput:focus {
-	outline: none !important;
-	box-shadow: none !important;
-	border-color: #dee2e6 !important;
+/* Mengecilkan lebar default modal agar lebih proporsional */
+.modal-dialog {
+    max-width: 450px; /* Lebar ideal untuk form input tunggal/pendek */
 }
 
-/* Memastikan ikon di sebelahnya tidak berubah warna saat input aktif */
-.input-group:focus-within .input-group-text {
-	border-color: #dee2e6 !important;
+/* Memperkecil padding dalam modal */
+.modal-body {
+    padding: 1.25rem !important;
+}
+
+.modal-header {
+    padding: 0.75rem 1.25rem !important;
+}
+
+.modal-footer {
+    padding: 0.75rem 1.25rem !important;
+}
+
+/* Memperkecil font judul modal */
+.modal-title {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+/* Mengatur spasi antar input di dalam modal agar lebih rapat */
+.modal-body .mb-3 {
+    margin-bottom: 0.75rem !important;
+}
+
+.modal-body label {
+    font-size: 0.7rem; /* Label lebih kecil & tegas */
+    margin-bottom: 3px;
+    color: #6c757d;
+}
+
+/* Input di dalam modal dibuat lebih compact */
+.modal-body .form-control, 
+.modal-body .form-select {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 4px;
 }
